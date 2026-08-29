@@ -1,0 +1,15 @@
+package models
+
+import "time"
+
+type User struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	GoogleID  string    `gorm:"uniqueIndex;not null" json:"google_id"`
+	Email     string    `gorm:"uniqueIndex;not null" json:"email"`
+	Name      string    `json:"name"`
+	Avatar    string    `json:"avatar"`
+	Hearts    int       `gorm:"default:5" json:"hearts"`   
+	Streak    int       `gorm:"default:0" json:"streak"`  
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
