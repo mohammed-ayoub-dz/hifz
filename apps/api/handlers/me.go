@@ -30,7 +30,6 @@ func GetMe(db *gorm.DB) fiber.Handler {
 		err := db.
 			Select(
 				"id",
-				"email",
 				"name",
 				"avatar",
 				"daily_goal",
