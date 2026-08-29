@@ -10,6 +10,8 @@ type User struct {
 	Avatar    string    `json:"avatar"`
 	Hearts    int       `gorm:"default:5" json:"hearts"`   
 	Streak    int       `gorm:"default:0" json:"streak"`  
+	DailyGoal   int       `gorm:"default:5" json:"daily_goal"`
+	Onboarded   bool      `gorm:"default:false" json:"onboarded"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 
