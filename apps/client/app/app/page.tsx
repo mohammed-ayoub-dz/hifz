@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, handleApiError } from "@/lib/api";
+import { api, API_BASE_URL, handleApiError } from "@/lib/api";
 
 interface User {
   id: number;
@@ -20,7 +20,7 @@ export default function Application() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get("/auth/me", { //قريبا نضيف اندبوينت هنا من backend go
+        const response = await api.get(`/app/me`, {
           withCredentials: true,
         });
 

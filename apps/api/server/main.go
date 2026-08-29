@@ -52,7 +52,7 @@ func main() {
 	authRoutes.RegisterRoutes(api)
 
 	protectedAPI := api.Group(
-		"/api/v1/app",
+		"/app",
 		middleware.Protected(),
 	)
 
