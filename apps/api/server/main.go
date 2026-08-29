@@ -13,6 +13,7 @@ import (
 	authRoutes "github.com/mohammed-ayoub-dz/hifz/routes/auth"
 	dailyRoutes "github.com/mohammed-ayoub-dz/hifz/routes/daily"
 	hifzRoutes "github.com/mohammed-ayoub-dz/hifz/routes/hifz"
+	"github.com/mohammed-ayoub-dz/hifz/routes/me"
 	sessionRoutes "github.com/mohammed-ayoub-dz/hifz/routes/sessions"
 	"github.com/mohammed-ayoub-dz/hifz/routes/user"
 )
@@ -59,6 +60,7 @@ func main() {
 	sessionRoutes.RegisterRoutes(protectedAPI)
 	dailyRoutes.RegisterRoutes(protectedAPI)
 	user.RegisterRoutes(protectedAPI)
+	me.RegisterRoutes(protectedAPI)
 
 	log.Fatal(app.Listen(":8080"))
 }
