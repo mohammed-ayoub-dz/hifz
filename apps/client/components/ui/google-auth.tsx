@@ -9,7 +9,6 @@ interface GoogleAuthButtonProps {
 }
 
 export default function GoogleAuthButton({
-  label = "ابدأ الحفظ",
   className = "",
 }: GoogleAuthButtonProps) {
   return (
