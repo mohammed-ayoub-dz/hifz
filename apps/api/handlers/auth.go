@@ -35,6 +35,11 @@ type AuthClaims struct {
 	jwt.RegisteredClaims
 }
 
+
+const tokenIDBytes = 16
+var ErrTokenIDGeneration = errors.New("failed to generate secure token ID")
+
+
 func GoogleLogin(c fiber.Ctx) error {
 
 	var req GoogleAuthRequest
@@ -194,6 +199,13 @@ func GoogleLogin(c fiber.Ctx) error {
 
 	now := time.Now()
 
+	tokenID, err := generateTokenID()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Unable to create authentication session.",
+		})
+	}
+
 	claims := AuthClaims{
 		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -213,7 +225,7 @@ func GoogleLogin(c fiber.Ctx) error {
 				now.Add(72 * time.Hour),
 			),
 
-			ID: generateTokenID(),
+			ID: tokenID,
 		},
 	}
 
@@ -243,6 +255,21 @@ func GoogleLogin(c fiber.Ctx) error {
 		Streak: user.Streak,
 	}
 
+	sameSiteMode := "Lax"
+	if isProduction() {
+		sameSiteMode = "None" 
+	}
+
+	c.Cookie(&fiber.Cookie{
+    Name:     "hifz_token",
+    Value:    tokenString,
+    Expires:  time.Now().Add(72 * time.Hour),
+    HTTPOnly: true,                 
+    Secure:   isProduction(),                 
+    SameSite: sameSiteMode,                
+    Path:     "/",
+    })
+
 	
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Logged in successfully.",
@@ -251,12 +278,17 @@ func GoogleLogin(c fiber.Ctx) error {
 	})
 }
 
-func generateTokenID() string {
-	var b [16]byte
+func generateTokenID() (string, error) {
+	var b [tokenIDBytes]byte
 
 	if _, err := rand.Read(b[:]); err != nil {
-		return ""
+		return "", ErrTokenIDGeneration
 	}
 
-	return hex.EncodeToString(b[:])
+	return hex.EncodeToString(b[:]), nil
+}
+
+
+func isProduction() bool {
+	return os.Getenv("APP_ENV") == "production" || os.Getenv("NODE_ENV") == "production"
 }

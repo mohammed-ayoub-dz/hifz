@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/mohammed-ayoub-dz/hifz/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -32,10 +33,14 @@ func Db(){
 	var dbErr error
 
 	DB, dbErr = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
 	if dbErr != nil {
 		log.Fatal("Failed to connect to the database ", dbErr)
 	}
+	
+	err = DB.AutoMigrate(&models.User{})
+	if err != nil {
+		log.Fatal("Failed to create the users table: ", err)
+	} 
 
 	fmt.Println("Successfully connected to the database.")
 		
