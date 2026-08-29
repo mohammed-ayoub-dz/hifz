@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import GoogleAuthButton from "@/components/ui/google-auth";
 
 export default function Hero() {
   const curtainRef = useRef<HTMLDivElement>(null);
@@ -52,12 +53,24 @@ export default function Hero() {
   }, []);
 
   return (
-    <main className="relative min-h-screen overflow-hidden">
-      <section className="relative z-0 min-h-screen">
-        <div className="flex min-h-screen items-center justify-center">
-          <h1 className="text-7xl font-bold">Landing Page</h1>
-        </div>
-      </section>
+    <main className="relative  overflow-hidden">
+    <section className="relative z-0 mt-[20vh] w-full">
+  <div className="flex h-full flex-col items-center justify-center text-center px-4">
+    <span className="mb-4 rounded-full bg-neutral-100 px-4 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-800">
+      رحلتك مع القرآن تبدأ من هنا
+    </span>
+
+    <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl md:text-8xl">
+      احفظ بثبات، واثبت على وردك.
+    </h1>
+
+    <p className="mt-6 max-w-xl text-lg leading-relaxed text-neutral-600 dark:text-neutral-400 sm:text-xl">
+      طريقتك اليومية لتثبيت الحفظ، ضبط المتشابهات، وتتبع إتقانك دون تشتيت.
+    </p>
+
+    <GoogleAuthButton />
+  </div>
+</section>
 
       <div
         ref={curtainRef}

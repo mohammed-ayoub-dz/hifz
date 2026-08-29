@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/joho/godotenv"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 
 	"github.com/mohammed-ayoub-dz/hifz/config"
@@ -16,6 +17,9 @@ import (
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Failed to load .env")
+	}
 	if os.Getenv("JWT_SECRET") == "" {
 		log.Fatal("JWT_SECRET is not configured")
 	}
@@ -46,7 +50,7 @@ func main() {
 	authRoutes.RegisterRoutes(api)
 
 	protectedAPI := api.Group(
-		"/",
+		"/api/v1/app",
 		middleware.Protected(),
 	)
 

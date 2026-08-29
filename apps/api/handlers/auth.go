@@ -21,6 +21,11 @@ type GoogleAuthRequest struct {
 	Token string `json:"token"`
 }
 
+type AuthClaims struct {
+	UserID uint `json:"user_id"`
+	jwt.RegisteredClaims
+}
+
 type AuthUserResponse struct {
 	ID     uint   `json:"id"`
 	Email  string `json:"email"`
@@ -29,16 +34,6 @@ type AuthUserResponse struct {
 	Hearts int    `json:"hearts"`
 	Streak int    `json:"streak"`
 }
-
-type AuthClaims struct {
-	UserID uint `json:"user_id"`
-	jwt.RegisteredClaims
-}
-
-
-const tokenIDBytes = 16
-var ErrTokenIDGeneration = errors.New("failed to generate secure token ID")
-
 
 func GoogleLogin(c fiber.Ctx) error {
 
@@ -57,19 +52,15 @@ func GoogleLogin(c fiber.Ctx) error {
 			"error": "A Google token is required.",
 		})
 	}
+
+
 	googleClientID := strings.TrimSpace(
 		os.Getenv("GOOGLE_CLIENT_ID"),
 	)
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 
-	if googleClientID == "" {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Authentication service is not configured.",
-		})
-	}
-
-	if len(jwtSecret) < 32 {
+	if googleClientID == "" || len(jwtSecret) < 32 {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Authentication service is not configured.",
 		})
@@ -93,6 +84,7 @@ func GoogleLogin(c fiber.Ctx) error {
 		})
 	}
 
+
 	googleID := strings.TrimSpace(payload.Subject)
 
 	if googleID == "" {
@@ -101,7 +93,7 @@ func GoogleLogin(c fiber.Ctx) error {
 		})
 	}
 
-	email, ok := payload.Claims["email"].(string)
+	emailClaim, ok := payload.Claims["email"]
 
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -109,7 +101,15 @@ func GoogleLogin(c fiber.Ctx) error {
 		})
 	}
 
-	email = strings.TrimSpace(strings.ToLower(email))
+	email, ok := emailClaim.(string)
+
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid Google account email.",
+		})
+	}
+
+	email = strings.ToLower(strings.TrimSpace(email))
 
 	if email == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -117,7 +117,17 @@ func GoogleLogin(c fiber.Ctx) error {
 		})
 	}
 
-	emailVerified, ok := payload.Claims["email_verified"].(bool)
+	// 
+	
+	emailVerifiedClaim, ok := payload.Claims["email_verified"]
+
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Google email verification status is missing.",
+		})
+	}
+
+	emailVerified, ok := emailVerifiedClaim.(bool)
 
 	if !ok || !emailVerified {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -125,47 +135,53 @@ func GoogleLogin(c fiber.Ctx) error {
 		})
 	}
 
-	name, _ := payload.Claims["name"].(string)
-	avatar, _ := payload.Claims["picture"].(string)
 
-	name = strings.TrimSpace(name)
-	avatar = strings.TrimSpace(avatar)
+	name := ""
+
+	if value, ok := payload.Claims["name"].(string); ok {
+		name = strings.TrimSpace(value)
+	}
+
+	avatar := ""
+
+	if value, ok := payload.Claims["picture"].(string); ok {
+		avatar = strings.TrimSpace(value)
+	}
+
 
 	var user models.User
 
 	err = config.DB.Transaction(func(tx *gorm.DB) error {
-
 		result := tx.
 			Where("google_id = ?", googleID).
 			First(&user)
 
 		if result.Error == nil {
-			user.Name = name
-			user.Avatar = avatar
-
-			return tx.Model(&user).Updates(map[string]interface{}{
-				"name":   name,
-				"avatar": avatar,
-			}).Error
+			return tx.
+				Model(&user).
+				Updates(map[string]interface{}{
+					"name":   name,
+					"avatar": avatar,
+				}).Error
 		}
 
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return result.Error
 		}
+
 		result = tx.
 			Where("email = ?", email).
 			First(&user)
 
 		if result.Error == nil {
-			user.GoogleID = googleID
-			user.Name = name
-			user.Avatar = avatar
 
-			return tx.Model(&user).Updates(map[string]interface{}{
-				"google_id": googleID,
-				"name":      name,
-				"avatar":    avatar,
-			}).Error
+			return tx.
+				Model(&user).
+				Updates(map[string]interface{}{
+					"google_id": googleID,
+					"name":      name,
+					"avatar":    avatar,
+				}).Error
 		}
 
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -181,16 +197,10 @@ func GoogleLogin(c fiber.Ctx) error {
 			Streak:   0,
 		}
 
-		if err := tx.Create(&user).Error; err != nil {
-			return err
-		}
-
-		return nil
+		return tx.Create(&user).Error
 	})
 
-
 	if err != nil {
-
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Unable to complete authentication.",
 		})
@@ -200,6 +210,7 @@ func GoogleLogin(c fiber.Ctx) error {
 	now := time.Now()
 
 	tokenID, err := generateTokenID()
+
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Unable to create authentication session.",
@@ -208,6 +219,7 @@ func GoogleLogin(c fiber.Ctx) error {
 
 	claims := AuthClaims{
 		UserID: user.ID,
+
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer: "hifz-api",
 
@@ -239,11 +251,29 @@ func GoogleLogin(c fiber.Ctx) error {
 	)
 
 	if err != nil {
-
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Unable to create authentication session.",
 		})
 	}
+
+
+	isProd := isProduction();
+
+	sameSite := "Lax"
+
+	if isProd {
+		sameSite = "None"
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "hifz_token",
+		Value:    tokenString,
+		Expires:  now.Add(72 * time.Hour),
+		HTTPOnly: true,
+		Secure:   isProd,
+		SameSite: sameSite,
+		Path:     "/",
+	})
 
 
 	userResponse := AuthUserResponse{
@@ -255,40 +285,23 @@ func GoogleLogin(c fiber.Ctx) error {
 		Streak: user.Streak,
 	}
 
-	sameSiteMode := "Lax"
-	if isProduction() {
-		sameSiteMode = "None" 
-	}
-
-	c.Cookie(&fiber.Cookie{
-    Name:     "hifz_token",
-    Value:    tokenString,
-    Expires:  time.Now().Add(72 * time.Hour),
-    HTTPOnly: true,                 
-    Secure:   isProduction(),                 
-    SameSite: sameSiteMode,                
-    Path:     "/",
-    })
-
-	
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Logged in successfully.",
-		"token":   tokenString,
 		"user":    userResponse,
 	})
 }
 
+func isProduction() bool {
+	return true;
+}
+
 func generateTokenID() (string, error) {
-	var b [tokenIDBytes]byte
+	var b [32]byte
 
 	if _, err := rand.Read(b[:]); err != nil {
-		return "", ErrTokenIDGeneration
+		return "", err
 	}
 
 	return hex.EncodeToString(b[:]), nil
 }
 
-
-func isProduction() bool {
-	return os.Getenv("APP_ENV") == "production" || os.Getenv("NODE_ENV") == "production"
-}
