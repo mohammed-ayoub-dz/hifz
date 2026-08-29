@@ -2,8 +2,8 @@ package me
 
 import (
 	"github.com/gofiber/fiber/v3"
-	"gorm.io/gorm"
 
+	"github.com/mohammed-ayoub-dz/hifz/config"
 	"github.com/mohammed-ayoub-dz/hifz/handlers"
 	"github.com/mohammed-ayoub-dz/hifz/middleware"
 )
@@ -14,5 +14,5 @@ func RegisterRoutes(api fiber.Router) {
 		middleware.Protected(),
 	)
 
-	me.Get("/", handlers.GetMe(&gorm.DB{}))
+	me.Get("/", handlers.GetMe(config.DB))
 }
