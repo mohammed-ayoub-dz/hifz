@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"gorm.io/gorm"
 )
 
@@ -42,6 +43,11 @@ func main(){
 	fmt.Println("Successfully connected to the database.")
 		
 	app := fiber.New();
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowHeaders: []string{"Origin, Content-Type, Accept, Authorization"},
+	}))
 
 	log.Fatal(app.Listen(":3000"))
 }
