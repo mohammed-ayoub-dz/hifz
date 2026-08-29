@@ -10,6 +10,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
+import Hero from "@/landing/hero";
 import { useState } from "react";
 
 export default function LandingPage() {
@@ -31,7 +32,7 @@ export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full  flex justify-cetner items-center flex-col">
       <Navbar>
         <NavBody>
           <NavbarLogo />
@@ -77,16 +78,16 @@ export default function LandingPage() {
           </MobileNavMenu>
         </MobileNav>
       </Navbar>
-      <DummyContent />
+      <Content />
 
     </div>
   );
 }
 
-const DummyContent = () => {
+const Content = () => {
   return (
     <div className="container mx-auto p-8 pt-24">
-    
+    <Hero />
     </div>
   );
 };
