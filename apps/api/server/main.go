@@ -5,15 +5,16 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/joho/godotenv"
 	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/joho/godotenv"
 
 	"github.com/mohammed-ayoub-dz/hifz/config"
 	"github.com/mohammed-ayoub-dz/hifz/middleware"
 	authRoutes "github.com/mohammed-ayoub-dz/hifz/routes/auth"
+	dailyRoutes "github.com/mohammed-ayoub-dz/hifz/routes/daily"
 	hifzRoutes "github.com/mohammed-ayoub-dz/hifz/routes/hifz"
 	sessionRoutes "github.com/mohammed-ayoub-dz/hifz/routes/sessions"
-	dailyRoutes "github.com/mohammed-ayoub-dz/hifz/routes/daily"
+	"github.com/mohammed-ayoub-dz/hifz/routes/user"
 )
 
 func main() {
@@ -57,6 +58,7 @@ func main() {
 	hifzRoutes.RegisterRoutes(protectedAPI)
 	sessionRoutes.RegisterRoutes(protectedAPI)
 	dailyRoutes.RegisterRoutes(protectedAPI)
+	user.RegisterRoutes(protectedAPI)
 
 	log.Fatal(app.Listen(":8080"))
 }
