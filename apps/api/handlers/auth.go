@@ -266,7 +266,7 @@ func GoogleLogin(c fiber.Ctx) error {
 	}
 
 	c.Cookie(&fiber.Cookie{
-		Name:     "hifz_token",
+		Name:     "token",
 		Value:    tokenString,
 		Expires:  now.Add(72 * time.Hour),
 		HTTPOnly: true,
@@ -292,8 +292,9 @@ func GoogleLogin(c fiber.Ctx) error {
 }
 
 func isProduction() bool {
-	return true;
+    return os.Getenv("APP_ENV") == "production"
 }
+
 
 func generateTokenID() (string, error) {
 	var b [32]byte
