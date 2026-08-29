@@ -35,6 +35,8 @@ func GetMe(db *gorm.DB) fiber.Handler {
 				"avatar",
 				"daily_goal",
 				"onboarded",
+				"hearts",
+				"streak",
 				"created_at",
 			).
 			Where("id = ?", userID).
