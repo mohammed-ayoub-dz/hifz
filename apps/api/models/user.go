@@ -12,4 +12,8 @@ type User struct {
 	Streak    int       `gorm:"default:0" json:"streak"`  
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+
+	HifzProgresses []HifzProgress `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"-"`
+	DailyProgresses []DailyProgress `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"daily_progresses,omitempty"`
+	HifzSessions    []HifzSession   `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"hifz_sessions,omitempty"`
 }
