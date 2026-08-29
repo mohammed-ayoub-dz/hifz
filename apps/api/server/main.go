@@ -54,6 +54,5 @@ func main() {
 	sessionRoutes.RegisterRoutes(protectedAPI)
 	dailyRoutes.RegisterRoutes(protectedAPI)
 
-	// Start server.
 	log.Fatal(app.Listen(":8080"))
 }
