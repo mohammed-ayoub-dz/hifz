@@ -37,6 +37,14 @@ type UpdateSessionInput struct {
 	Score      int `json:"score"`
 	Mistakes   int `json:"mistakes"`
 	HeartsLost int `json:"hearts_lost"`
+	IsComplete   bool `json:"is_complete"`
+
+}
+
+
+type CompleteHifzSessionInput struct {
+	Mistakes   int `json:"mistakes"`
+	HeartsLost int `json:"hearts_lost"`
 }
 
 func CreateHifzSession(c fiber.Ctx) error {
@@ -69,6 +77,7 @@ func CreateHifzSession(c fiber.Ctx) error {
     SurahNumber: input.SurahNumber,
     StartAyah:   input.StartAyah,
     EndAyah:     input.EndAyah,
+	IsComplete : false,
     }
 
 	if err := config.DB.Create(&session).Error; err != nil {
@@ -293,6 +302,102 @@ func DeleteHifzSession(c fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"message": "Session deleted successfully.",
+	})
+}
+
+
+func CompleteHifzSession(c fiber.Ctx) error {
+	userID, err := utils.GetUserID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Authentication required.",
+		})
+	}
+
+	sessionID, err := parseID(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid session ID.",
+		})
+	}
+
+	var input CompleteHifzSessionInput
+
+	if err := c.Bind().JSON(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body.",
+		})
+	}
+
+	if input.Mistakes < 0 || input.HeartsLost < 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid mistakes or hearts lost value.",
+		})
+	}
+
+	err = config.DB.Transaction(func(tx *gorm.DB) error {
+		var session models.HifzSession
+
+		err := tx.
+			Where(
+				"id = ? AND user_id = ? AND is_complete = ?",
+				sessionID,
+				userID,
+				false,
+			).
+			First(&session).Error
+
+		if err != nil {
+			return err
+		}
+
+		result := tx.
+			Model(&session).
+			Updates(map[string]interface{}{
+				"is_complete": true,
+				"mistakes":    input.Mistakes,
+				"hearts_lost": input.HeartsLost,
+			})
+
+		if result.Error != nil {
+			return result.Error
+		}
+
+		result = tx.
+			Model(&models.User{}).
+			Where("id = ?", userID).
+			Updates(map[string]interface{}{
+				"hearts": gorm.Expr(
+					"hearts - ?",
+					input.HeartsLost,
+				),
+				"streak": gorm.Expr(
+					"streak + ?",
+					1,
+				),
+			})
+
+		if result.Error != nil {
+			return result.Error
+		}
+
+		return nil
+	})
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Hifz session not found or already completed.",
+		})
+	}
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to complete hifz session.",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Hifz session completed successfully.",
 	})
 }
 

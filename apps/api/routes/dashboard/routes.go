@@ -6,5 +6,5 @@ import (
 )
 
 func RegisterRoutes(router fiber.Router) {
-	router.Get("/", handlers.GetDashboard)
+	router.Get("/dashboard", handlers.GetDashboard)
 }

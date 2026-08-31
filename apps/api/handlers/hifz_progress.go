@@ -13,19 +13,19 @@ import (
 )
 
 type CreateHifzProgressInput struct {
-	SurahNumber  int `json:"surah_number"`
-	StartAyah    int `json:"start_ayah"`
-	EndAyah      int `json:"end_ayah"`
-	MasteryLevel int `json:"mastery_level"`
-	Repetitions  int `json:"repetitions"`
+	SurahNumber  int  `json:"surah_number"`
+	StartAyah    int  `json:"start_ayah"`
+	EndAyah      int  `json:"end_ayah"`
+	MasteryLevel int  `json:"mastery_level"`
+	Repetitions  int  `json:"repetitions"`
 }
 
 type UpdateHifzProgressInput struct {
-	SurahNumber  int `json:"surah_number"`
-	StartAyah    int `json:"start_ayah"`
-	EndAyah      int `json:"end_ayah"`
-	MasteryLevel int `json:"mastery_level"`
-	Repetitions  int `json:"repetitions"`
+	SurahNumber  int  `json:"surah_number"`
+	StartAyah    int  `json:"start_ayah"`
+	EndAyah      int  `json:"end_ayah"`
+	MasteryLevel int  `json:"mastery_level"`
+	Repetitions  int  `json:"repetitions"`
 }
 
 func CreateHifzProgress(c fiber.Ctx) error {
@@ -374,3 +374,5 @@ func ParseID(value string) (uint, error) {
 
 	return uint(id), nil
 }
+
+

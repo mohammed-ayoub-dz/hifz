@@ -15,4 +15,6 @@ func RegisterRoutes(router fiber.Router) {
 	sessions.Get("/:id", handlers.GetHifzSessionByID)
 	sessions.Patch("/:id", handlers.UpdateHifzSession)
 	sessions.Delete("/:id", handlers.DeleteHifzSession)
+
+	sessions.Post("/:id/complete", handlers.CompleteHifzSession)
 }

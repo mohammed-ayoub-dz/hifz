@@ -78,39 +78,34 @@ export default function AyahRecitation({
     const audio = audioRef.current;
     if (!audio) return;
 
-    // دالة التحديث باستخدام requestAnimationFrame
     const updateCurrentWord = () => {
       if (!audio || audio.paused) return;
 
       const currentTimeMs = audio.currentTime * 1000;
       const durationMs = audio.duration * 1000;
 
-      // إذا لم تكتمل مدة الصوت بعد، لا نقوم بشيء
       if (!durationMs || Number.isNaN(durationMs)) {
         rafRef.current = requestAnimationFrame(updateCurrentWord);
         return;
       }
 
-      // البحث عن آخر مقطع بدأ قبل الوقت الحالي (يعتمد على start فقط)
       let activeSegmentIndex = -1;
       for (let i = 0; i < segments.length; i++) {
         const [, start] = segments[i];
         if (currentTimeMs >= start) {
           activeSegmentIndex = i;
         } else {
-          break; // المقاطع مرتبة تصاعديًا حسب start
+          break; 
         }
       }
 
       if (activeSegmentIndex === -1) {
-        // قبل بداية أول كلمة
         setCurrentWord(-1);
       } else {
         const [wordIndex] = segments[activeSegmentIndex];
         setCurrentWord(wordIndex - 1);
       }
 
-      // استمرار الحلقة ما دام الصوت يعمل
       if (!audio.paused) {
         rafRef.current = requestAnimationFrame(updateCurrentWord);
       }

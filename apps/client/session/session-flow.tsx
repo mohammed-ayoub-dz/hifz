@@ -348,6 +348,8 @@ const handleCheckAnswer = () => {
   if (stage === "testing" && currentTestAyah) {
     return (
       <TestingStage
+      id={id as string}
+        currentAyah={testAyahs}
       />
     );
   }

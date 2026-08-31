@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@/contexts/user-context";
 import { api, handleApiError } from "@/lib/api";
+import Link from "next/link";
 
 interface HifzProgress {
   id: number;
@@ -34,6 +35,7 @@ interface HifzSession {
   duration: number;
   surah_number: number;
   start_ayah: number;
+  is_complete : boolean;
   end_ayah: number;
   score: number;
   mistakes: number;
@@ -60,8 +62,9 @@ export default function Dashboard() {
 
         const response = await api.get("/app/dashboard");
 
+        console.log(response);
+
         const {
-          user,
           daily,
           progress,
           sessions,
@@ -97,11 +100,13 @@ export default function Dashboard() {
       ? Math.min(Math.round((todayCompleted / dailyGoal) * 100), 100)
       : 0;
 
-  const totalMemorizedAyahs = useMemo(() => {
-    return progress.reduce((total, item) => {
-      return total + (item.end_ayah - item.start_ayah + 1);
+const totalMemorizedAyahs = useMemo(() => {
+  return sessions
+    .filter((session) => session.is_complete)
+    .reduce((total, session) => {
+      return total + (session.end_ayah - session.start_ayah + 1);
     }, 0);
-  }, [progress]);
+}, [sessions]);
 
   const latestProgress = progress[progress.length - 1];
 
@@ -164,43 +169,11 @@ export default function Dashboard() {
 
         <section className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-50 p-7 dark:border-neutral-800 dark:bg-neutral-950 sm:p-10">
           <div className="relative z-10 max-w-2xl">
-            <p className="mb-3 text-sm font-medium text-neutral-500 dark:text-neutral-400">
-              وِرد الحفظ اليومي
+            <p className="mb-3 text-2xl font-extrabold">
+             تريد حفظ آيات جديدة ؟
             </p>
 
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              {todayCompleted >= dailyGoal && dailyGoal > 0
-                ? "أتممت وِردك اليوم"
-                : "أكمل وِردك اليوم"}
-            </h2>
-
-            <p className="mt-3 text-neutral-500 dark:text-neutral-400">
-              {currentSurah
-                ? `سورة ${currentSurah} — الآيات ${currentStartAyah} إلى ${currentEndAyah}`
-                : "لم تبدأ الحفظ بعد."}
-            </p>
-
-            <div className="mt-8">
-              <div className="mb-3 flex items-center justify-between text-sm">
-                <span className="text-neutral-500 dark:text-neutral-400">
-                  التقدم اليومي
-                </span>
-
-                <span className="font-semibold">
-                  {todayCompleted} / {dailyGoal}
-                </span>
-              </div>
-
-              <div className="h-2 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
-                <div
-                  className="h-full rounded-full bg-black transition-all duration-500 dark:bg-white"
-                  style={{
-                    width: `${dailyPercentage}%`,
-                  }}
-                />
-              </div>
-            </div>
-
+        <Link href={"/app/session/new"}>
             <button
               type="button"
               className="mt-8 rounded-xl bg-black px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-black"
@@ -208,7 +181,9 @@ export default function Dashboard() {
               {todayCompleted > 0
                 ? "استكمل الحفظ"
                 : "بدأ حصة جديدة"}
-            </button>
+            </button>        
+        </Link>
+
           </div>
 
           <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-neutral-200/50 blur-3xl dark:bg-neutral-800/30" />
@@ -217,7 +192,7 @@ export default function Dashboard() {
 
       <div className="mx-auto mt-4 max-w-6xl space-y-6">
         <section className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-50 p-7 dark:border-neutral-800 dark:bg-neutral-950 sm:p-10">
-          <div className="relative z-10 max-w-2xl">
+          <div className="relative z-10 ">
             <p className="mb-3 text-sm font-medium text-neutral-500 dark:text-neutral-400">
               الحصص
             </p>
@@ -230,15 +205,15 @@ export default function Dashboard() {
               جميع الحصص التي أنجزتها والحصص السابقة.
             </p>
 
-            <div className="mt-8">
+            <div className="mt-8 w-full">
               {!hasSessions ? (
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
                   لا توجد حصص حتى الآن
                 </p>
               ) : (
-                <div className="space-y-3">
-                  {sessions.slice(0, 3).map((session) => (
-                    <Session
+                <div className="space-y-3 w-full">
+                  {sessions.slice(0, 3).reverse().map((session) => (
+                    <Session 
                       key={session.id}
                       session={session}
                     />
@@ -464,7 +439,8 @@ function Session({
   session: HifzSession;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-neutral-200 p-4 dark:border-neutral-800">
+    <Link href={`/app/session/${session.id}`} className="mb-1 mt-1">
+    <div className="flex w-full items-center justify-between rounded-2xl mt-3 mb-3 border border-neutral-200 p-4 dark:border-neutral-800">
       <div>
         <p className="font-medium">
           {session.session_type === "memorization"
@@ -480,7 +456,7 @@ function Session({
 
       <div className="text-left">
         <p className="text-sm font-semibold">
-          {session.score}%
+          {session.is_complete == true ?  "تم الحفظ": "لم يتم الحفظ" }
         </p>
 
         <p className="mt-1 text-xs text-neutral-400">
@@ -488,6 +464,7 @@ function Session({
         </p>
       </div>
     </div>
+    </Link>
   );
 }
 
