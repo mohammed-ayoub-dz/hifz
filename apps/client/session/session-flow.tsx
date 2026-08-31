@@ -228,7 +228,7 @@ const handleCheckAnswer = () => {
   const handleHeartsDepleted = async () => {
     try {
       const response = await api.post(`/app/sessions/${id}/hearts-lost`, {
-        hearts_lost: testState.maxHearts,
+        hearts_lost: testState.hearts,
       });
 
       const cooldownSeconds = response.data?.cooldown_seconds ?? 300;
@@ -263,7 +263,7 @@ const handleCheckAnswer = () => {
         clearInterval(timer);
         setTestState((prev) => ({
           ...prev,
-          hearts: prev.maxHearts,
+          hearts: prev.hearts,
           cooldownTimer: 0,
           userInput: "",
           isCorrect: null,
