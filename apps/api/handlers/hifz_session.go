@@ -23,17 +23,10 @@ const (
 )
 
 type CreateSessionInput struct {
-	SessionType string `json:"session_type"`
-
-	Duration int `json:"duration"`
-
-	SurahNumber int `json:"surah_number"`
-	StartAyah   int `json:"start_ayah"`
-	EndAyah     int `json:"end_ayah"`
-
-	Score      int `json:"score"`
-	Mistakes   int `json:"mistakes"`
-	HeartsLost int `json:"hearts_lost"`
+    SessionType string `json:"session_type"`
+    SurahNumber int    `json:"surah_number"`
+    StartAyah   int    `json:"start_ayah"`
+    EndAyah     int    `json:"end_ayah"`
 }
 
 type UpdateSessionInput struct {
@@ -71,16 +64,12 @@ func CreateHifzSession(c fiber.Ctx) error {
 	}
 
 	session := models.HifzSession{
-		UserID:      userID,
-		SessionType: input.SessionType,
-		Duration:    input.Duration,
-		SurahNumber: input.SurahNumber,
-		StartAyah:   input.StartAyah,
-		EndAyah:     input.EndAyah,
-		Score:       input.Score,
-		Mistakes:    input.Mistakes,
-		HeartsLost:  input.HeartsLost,
-	}
+    UserID:      userID,
+    SessionType: input.SessionType,
+    SurahNumber: input.SurahNumber,
+    StartAyah:   input.StartAyah,
+    EndAyah:     input.EndAyah,
+    }
 
 	if err := config.DB.Create(&session).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -364,13 +353,7 @@ func validateCreateSessionInput(input CreateSessionInput) error {
 		)
 	}
 
-	if input.Duration <= 0 {
-		return errors.New("duration must be greater than zero")
-	}
 
-	if input.Duration > maxSessionDuration {
-		return errors.New("duration cannot exceed 24 hours")
-	}
 
 	if input.SurahNumber < 1 || input.SurahNumber > 114 {
 		return errors.New("surah_number must be between 1 and 114")
@@ -384,17 +367,6 @@ func validateCreateSessionInput(input CreateSessionInput) error {
 		return errors.New("end_ayah must be greater than or equal to start_ayah")
 	}
 
-	if input.Score < 0 || input.Score > maxSessionScore {
-		return errors.New("score must be between 0 and 100")
-	}
-
-	if input.Mistakes < 0 || input.Mistakes > maxSessionMistakes {
-		return errors.New("mistakes must be between 0 and 10000")
-	}
-
-	if input.HeartsLost < 0 || input.HeartsLost > maxSessionHeartsLost {
-		return errors.New("hearts_lost must be between 0 and 10000")
-	}
 
 	return nil
 }

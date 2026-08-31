@@ -1,4 +1,5 @@
 import { UserProvider } from "@/contexts/user-context";
+import Header from "@/modules/header";
 
 export default function RootLayout({
   children,
@@ -9,6 +10,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body>
         <UserProvider>
+          <Header />
           {children}
         </UserProvider>
       </body>

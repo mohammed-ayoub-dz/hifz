@@ -37,7 +37,12 @@ func Db(){
 		log.Fatal("Failed to connect to the database ", dbErr)
 	}
 	
-	err = DB.AutoMigrate(&models.User{})
+	err = DB.AutoMigrate(
+    &models.User{},
+    &models.HifzProgress{},
+    &models.DailyProgress{},
+    &models.HifzSession{},
+   )
 	if err != nil {
 		log.Fatal("Failed to create the users table: ", err)
 	} 
