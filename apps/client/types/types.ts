@@ -47,7 +47,6 @@ export type Stage =
 export type TestState = {
   currentAyahIndex: number;
   hearts: number;
-  maxHearts: number;
   userInput: string;
   isCorrect: boolean | null;
   isChecking: boolean;

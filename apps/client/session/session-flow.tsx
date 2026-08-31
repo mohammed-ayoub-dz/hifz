@@ -12,13 +12,14 @@ import {
   FinalTestState,
   Ayah,
 } from "@/types/types";
-import { CDN_URL, REPETITIONS_PER_AYAH, DEFAULT_MAX_HEARTS } from "@/constant/constant";
+import { CDN_URL, REPETITIONS_PER_AYAH } from "@/constant/constant";
 import { isArabicMatch } from "@/lib/utils";
 import LoadingStage from "./loading-stage";
 import ErrorStage from "./error-stage";
 import ListeningStage from "./listening-stage";
 import TestingStage from "./testing-stage";
 import SuccessStage from "./success-stage";
+import { useUser } from "@/contexts/user-context";
 
 interface SessionFlowProps {
   sessionId: string | string[];
@@ -27,6 +28,7 @@ interface SessionFlowProps {
 export default function SessionFlow({ sessionId }: SessionFlowProps) {
   const router = useRouter();
   const id = Array.isArray(sessionId) ? sessionId[0] : sessionId;
+  const user = useUser();
 
   const [session, setSession] = useState<HifzSession | null>(null);
   const [quran, setQuran] = useState<QuranData | null>(null);
@@ -39,8 +41,7 @@ export default function SessionFlow({ sessionId }: SessionFlowProps) {
 
   const [testState, setTestState] = useState<TestState>({
     currentAyahIndex: 0,
-    hearts: DEFAULT_MAX_HEARTS,
-    maxHearts: DEFAULT_MAX_HEARTS,
+    hearts: user.user?.hearts as number,
     userInput: "",
     isCorrect: null,
     isChecking: false,
