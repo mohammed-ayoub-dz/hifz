@@ -160,7 +160,7 @@ export default function NewSession() {
         throw new Error("لم يتم إرجاع معرف الجلسة.");
       }
 
-      router.push(`/session/${session.id}`);
+      router.push(`/app/session/${session.id}`);
     } catch (error) {
      console.error(error); 
      setCreateError( error instanceof Error ? error.message : "تعذر إنشاء جلسة الحفظ." ); 
