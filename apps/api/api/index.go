@@ -54,7 +54,7 @@ func getApp() *fiber.App {
 			AllowCredentials: true,
 		}))
 
-		api := app.Group("/api")
+		api := app.Group("/api") //api
 
 		authRoutes.RegisterRoutes(api)
 
