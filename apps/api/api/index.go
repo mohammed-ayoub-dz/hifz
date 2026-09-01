@@ -43,7 +43,15 @@ func getApp() *fiber.App {
 
 		app.Use(cors.New(cors.Config{
 			AllowOrigins: []string{
-				os.Getenv("FRONTEND_URL"),
+				"https://hifzapp.netlify.app",
+			},
+			AllowMethods: []string{
+				"GET",
+				"POST",
+				"PUT",
+				"PATCH",
+				"DELETE",
+				"OPTIONS",
 			},
 			AllowHeaders: []string{
 				"Origin",
@@ -53,7 +61,6 @@ func getApp() *fiber.App {
 			},
 			AllowCredentials: true,
 		}))
-
 		api := app.Group("/api") //api
 
 		authRoutes.RegisterRoutes(api)
