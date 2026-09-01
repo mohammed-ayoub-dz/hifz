@@ -82,7 +82,5 @@ func getApp() *fiber.App {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	r.RequestURI = r.URL.String()
-
-	adaptor.FiberApp(getApp())(w, r)
+    adaptor.FiberApp(getApp())(w, r)
 }
