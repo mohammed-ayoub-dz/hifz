@@ -62,7 +62,6 @@ export default function Dashboard() {
 
         const response = await api.get("/app/dashboard");
 
-        console.log(response);
 
         const {
           daily,

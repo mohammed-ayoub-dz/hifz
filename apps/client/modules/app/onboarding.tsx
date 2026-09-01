@@ -6,6 +6,7 @@ import gsap from "gsap";
 
 import { api, handleApiError } from "@/lib/api";
 import { useUser } from "@/contexts/user-context";
+import Link from "next/link";
 
 const goals = [
   {
@@ -347,6 +348,16 @@ const { user, loading } = useUser();
           >
             {isSubmitting ? "جاري الحفظ..." : "متابعة"}
           </button>
+
+
+          {isSettings && (
+            <Link href={"/app/profile"}>
+            
+            <p className="mt-10">
+              رجوع
+            </p>
+            </Link>
+          )}
 
           {error && (
             <p

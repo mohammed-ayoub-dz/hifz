@@ -49,8 +49,8 @@ export default function Header() {
             {user.streak}
           </span>
         </div>
-
-              <div className="flex items-center gap-3">
+        <Link href={"/app/profile"}>
+          <div className="flex items-center gap-3">
         {user.avatar ? (
           <img
             src={user.avatar}
@@ -65,6 +65,8 @@ export default function Header() {
 
       
       </div>
+        </Link>
+            
       </div>
     </header>
   );

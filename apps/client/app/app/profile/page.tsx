@@ -127,46 +127,6 @@ export default function Profile() {
           <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-neutral-200/50 blur-3xl dark:bg-neutral-800/30" />
         </section>
 
-        <section>
-          <div className="mb-4">
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              إحصائياتك
-            </p>
-
-            <h2 className="mt-1 text-xl font-semibold">
-              رحلتك في الحفظ
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-
-            <StatCard
-              label="السلسلة"
-              value={String(user.streak)}
-              suffix="يوم"
-            />
-
-            <StatCard
-              label="القلوب"
-              value={String(user.hearts)}
-              suffix=""
-            />
-
-            <StatCard
-              label="الهدف اليومي"
-              value={String(user.daily_goal)}
-              suffix="آية"
-            />
-
-            <StatCard
-              label="الحالة"
-              value={user.onboarded ? "جاهز" : "جديد"}
-              suffix=""
-            />
-
-          </div>
-        </section>
-
         <section className="rounded-3xl border border-neutral-200 p-6 dark:border-neutral-800 sm:p-8">
 
           <div className="mb-6">

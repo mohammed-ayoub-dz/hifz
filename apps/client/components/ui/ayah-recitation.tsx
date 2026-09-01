@@ -247,7 +247,7 @@ export default function AyahRecitation({
         {isPlaying ? "Ⅱ" : "▶"}
       </button>
 
-      <audio ref={audioRef} preload="auto" />
+      <audio ref={audioRef} />
     </div>
   );
 }

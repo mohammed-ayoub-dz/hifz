@@ -4,49 +4,71 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/joho/godotenv"
 	"github.com/mohammed-ayoub-dz/hifz/models"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-func Db(){
-	err := godotenv.Load()
+var dbOnce sync.Once
 
-	if err != nil {
-		log.Println("The .env file was not found in the runtime environment.")
-	}
+func Db() {
+	dbOnce.Do(func() {
 
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-	sslmode := os.Getenv("DB_SSLMODE")
+		_ = godotenv.Load()
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
-		host, user, password, dbname, port, sslmode)
+		host := os.Getenv("DB_HOST")
+		port := os.Getenv("DB_PORT")
+		user := os.Getenv("DB_USER")
+		password := os.Getenv("DB_PASSWORD")
+		dbname := os.Getenv("DB_NAME")
+		sslmode := os.Getenv("DB_SSLMODE")
 
-	var dbErr error
+		dsn := fmt.Sprintf(
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+			host,
+			user,
+			password,
+			dbname,
+			port,
+			sslmode,
+		)
 
-	DB, dbErr = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if dbErr != nil {
-		log.Fatal("Failed to connect to the database ", dbErr)
-	}
-	
-	err = DB.AutoMigrate(
-    &models.User{},
-    &models.HifzProgress{},
-    &models.DailyProgress{},
-    &models.HifzSession{},
-   )
-	if err != nil {
-		log.Fatal("Failed to create the users table: ", err)
-	} 
+		db, err := gorm.Open(
+			postgres.Open(dsn),
+			&gorm.Config{},
+		)
 
-	fmt.Println("Successfully connected to the database.")
-		
+		if err != nil {
+			log.Fatal("Failed to connect to database:", err)
+		}
+
+		sqlDB, err := db.DB()
+		if err != nil {
+			log.Fatal("Failed to get SQL database:", err)
+		}
+
+		sqlDB.SetMaxOpenConns(5)
+		sqlDB.SetMaxIdleConns(2)
+
+		DB = db
+
+		err = DB.AutoMigrate(
+			&models.User{},
+			&models.HifzProgress{},
+			&models.DailyProgress{},
+			&models.HifzSession{},
+		)
+
+		if err != nil {
+			log.Fatal("Failed to migrate database:", err)
+		}
+
+		fmt.Println("Successfully connected to the database.")
+	})
 }

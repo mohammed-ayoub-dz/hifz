@@ -81,10 +81,11 @@ export default function SessionFlow({ sessionId }: SessionFlowProps) {
   }, [session, recitation, currentAyahNumber]);
 
   const audioUrl = useMemo(() => {
-    if (!session || currentAyahNumber === null || !CDN_URL) return null;
+    if (!session || currentAyahNumber === null) return null;
     const surah = String(session.surah_number).padStart(3, "0");
-    const ayahNumber = String(currentAyahNumber).padStart(3, "0");
-    return `${CDN_URL}/mp3/${surah}${ayahNumber}.mp3`;
+    const ayah = String(currentAyahNumber).padStart(3, "0");
+    
+    return `https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/${surah}${ayah}.mp3`;
   }, [session, currentAyahNumber]);
 
   const testAyahs = useMemo(() => {
