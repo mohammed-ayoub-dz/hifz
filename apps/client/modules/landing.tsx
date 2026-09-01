@@ -35,7 +35,7 @@ export default function LandingPage() {
 
   return (
     <div className="relative w-full  flex justify-cetner items-center flex-col">
-      <Navbar>
+      <Navbar className=" fixed top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
         <NavBody>
           <NavbarLogo />
           <NavItems items={navItems} />

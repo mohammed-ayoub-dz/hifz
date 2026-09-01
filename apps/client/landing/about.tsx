@@ -301,7 +301,7 @@ export default function About() {
   ref={rootRef}
   dir="rtl"
   id="about"
-  className="relative min-h-screen overflow-hidden bg-background text-foreground"
+  className="relative overflow-hidden bg-background text-foreground"
 >
   <section
     ref={heroRef}
