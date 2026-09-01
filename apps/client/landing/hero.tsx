@@ -53,7 +53,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <main className="relative  overflow-hidden">
+    <main id="main" className="relative h-screen overflow-hidden">
     <section className="relative z-0 mt-[20vh] w-full">
   <div className="flex h-full flex-col items-center justify-center text-center px-4">
     <span className="mb-4 rounded-full bg-neutral-100 px-4 py-1.5 text-xs font-medium text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-800">

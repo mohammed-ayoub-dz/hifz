@@ -1,5 +1,6 @@
 "use client";
 
+import { ModeToggle } from "@/components/ui/mode-toggle";
 import { useUser } from "@/contexts/user-context";
 import { useRouter } from "next/navigation";
 
@@ -122,6 +123,8 @@ export default function Profile() {
             >
               تغيير الخطة
             </button>
+
+            <ModeToggle />
           </div>
 
           <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-neutral-200/50 blur-3xl dark:bg-neutral-800/30" />

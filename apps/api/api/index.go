@@ -54,12 +54,12 @@ func getApp() *fiber.App {
 			AllowCredentials: true,
 		}))
 
-		api := app.Group("/api/v1")
+		api := app.Group("/api")
 
 		authRoutes.RegisterRoutes(api)
 
 		protectedAPI := api.Group(
-			"/app",
+			"/app/v1",
 			middleware.Protected(),
 		)
 

@@ -10,22 +10,24 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
+import About from "@/landing/about";
 import Hero from "@/landing/hero";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function LandingPage() {
   const navItems = [
     {
       name: "الرئيسية",
-      link: "/",
+      link: "#main",
     },
     {
       name: "عن المشروع",
-      link: "#pricing",
+      link: "#about",
     },
     {
       name: "المصادر",
-      link: "#contact",
+      link: "https://qul.tarteel.ai/resources",
     },
   ];
 
@@ -38,7 +40,9 @@ export default function LandingPage() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <NavbarButton variant="secondary">تسجيل الدخول</NavbarButton>
+            <Link href="https://github.com/mohammed-ayoub-dz/hifz" target="_blank">
+              <NavbarButton variant="secondary">Github </NavbarButton>
+            </Link>
           </div>
         </NavBody>
 
@@ -66,13 +70,16 @@ export default function LandingPage() {
               </a>
             ))}
             <div className="flex w-full flex-col gap-4">
+            <Link href="https://github.com/mohammed-ayoub-dz/hifz" target="_blank">
+              
               <NavbarButton
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="primary"
                 className="w-full"
               >
-                تسجيل دخول
+               Github
               </NavbarButton>
+              </Link>
              
             </div>
           </MobileNavMenu>
@@ -86,8 +93,9 @@ export default function LandingPage() {
 
 const Content = () => {
   return (
-    <div className="container mx-auto p-8 pt-24">
+    <div className="container ">
     <Hero />
+    <About />
     </div>
   );
 };
