@@ -3,6 +3,7 @@
 import Heart from "@/components/ui/heart";
 import Fire from "@/components/ui/fire";
 import { useUser } from "@/contexts/user-context";
+import Link from "next/link";
 
 export default function Header() {
   const { user, loading } = useUser();
@@ -22,26 +23,15 @@ export default function Header() {
   }
 
   return (
-    <header className="flex w-full items-center justify-between px-6 py-4">
-      <div className="flex items-center gap-3">
-        {user.avatar ? (
-          <img
-            src={user.avatar}
-            alt={user.name || "User avatar"}
-            className="h-10 w-10 rounded-full object-cover"
-          />
-        ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 font-semibold dark:bg-neutral-800">
-            {user.name?.charAt(0).toUpperCase()}
-          </div>
-        )}
-
-        <div className="hidden sm:block">
-          <p className="text-sm font-semibold">
-            {user.name}
-          </p>
-        </div>
-      </div>
+    <header className="flex w-full items-center justify-between px-6 py-4 fixed top-0 w-full backdrop-blur-xl  z-50">
+      <Link href={"/app"}>
+        <img
+        src="/logo.svg"
+        alt="logo"
+        width={30}
+        height={30}
+      />
+      </Link>
 
       <div className="flex items-center gap-5">
         <div className="flex items-center gap-2">
@@ -59,6 +49,22 @@ export default function Header() {
             {user.streak}
           </span>
         </div>
+
+              <div className="flex items-center gap-3">
+        {user.avatar ? (
+          <img
+            src={user.avatar}
+            alt={user.name || "User avatar"}
+            className="h-10 w-10 rounded-full object-cover"
+          />
+        ) : (
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 font-semibold dark:bg-neutral-800">
+            {user.name?.charAt(0).toUpperCase()}
+          </div>
+        )}
+
+      
+      </div>
       </div>
     </header>
   );

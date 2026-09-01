@@ -11,7 +11,9 @@ export default function RootLayout({
       <body>
         <UserProvider>
           <Header />
-          {children}
+          <div className="mt-20">
+            {children}
+          </div>
         </UserProvider>
       </body>
     </html>

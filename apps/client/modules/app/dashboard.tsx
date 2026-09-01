@@ -221,13 +221,15 @@ const totalMemorizedAyahs = useMemo(() => {
                 </div>
               )}
             </div>
-
-            <button
-              type="button"
-              className="mt-8 rounded-xl bg-black px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-black"
-            >
-              عرض جميع الحصص
-            </button>
+            <Link href={"/app/session"}>
+              <button
+                type="button"
+                className="mt-8 rounded-xl bg-black px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-black"
+              >
+                عرض جميع الحصص
+              </button>
+            
+            </Link>
           </div>
 
           <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-neutral-200/50 blur-3xl dark:bg-neutral-800/30" />
