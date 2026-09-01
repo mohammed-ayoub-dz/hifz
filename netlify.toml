@@ -1,5 +1,7 @@
- command = "cd apps/client && bun run build"
-  publish = "apps/client/.next"
+[build]
+  base = "apps/client"
+  command = "bun run build"
+  publish = ".next"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
