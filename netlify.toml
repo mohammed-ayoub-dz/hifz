@@ -1,0 +1,4 @@
+[build]
+  base = "apps/client"
+  command = "bun run build"
+  publish = ".next"
