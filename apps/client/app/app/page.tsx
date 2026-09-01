@@ -5,7 +5,7 @@ export default function Application(){
     return (
         <>
           <Dashboard />
-          <Onboarding /> 
+          <Onboarding isSettings={false}/> 
         </>
     )
 }

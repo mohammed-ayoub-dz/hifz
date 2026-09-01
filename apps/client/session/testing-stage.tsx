@@ -375,131 +375,343 @@ export default function TestStage({
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        الاخطاء : {Mistakes}
-        القلوب المفقودة لهذه الحصة : {heartLosts}
+<div className="w-full p-4 lg:w-1/2 mx-auto flex flex-col gap-8">
+
+  <div className="grid grid-cols-1 gap-4">
+    <div className="
+      relative overflow-hidden
+      rounded-2xl
+      border border-border/60
+      bg-card/60
+      backdrop-blur-sm
+      p-5
+      text-center
+      shadow-sm
+      
+    ">
+      <div className="text-sm text-muted-foreground mb-2">
+        المحاولات 
       </div>
 
-      <div className="min-h-16 flex flex-wrap gap-3 justify-center">
-        {userInput.map((word, index) => (
+      <div className="text-3xl font-bold tabular-nums">
+        {Mistakes}
+      </div>
+
+    </div>
+
+   
+  </div>
+
+
+  <div className="
+    relative
+    min-h-40
+    rounded-3xl
+    border border-border/60
+    bg-muted/20
+    p-6
+    shadow-inner
+  ">
+    <div className="
+      absolute
+      top-4
+      right-5
+      text-xs
+      text-muted-foreground
+      select-none
+    ">
+      ترتيبك
+    </div>
+
+    <div className="
+      min-h-28
+      flex
+      flex-wrap
+      items-center
+      justify-center
+      content-center
+      gap-3
+      pt-5
+    ">
+      {userInput.length > 0 ? (
+        userInput.map((word, index) => (
           <div
             key={`${word.id}-${word.wordIndex}-${index}`}
             ref={(el) => {
               inputRefs.current[index] = el;
             }}
             onClick={() => removeUserInput(word)}
-            className="rounded-xl font-[QuranCommon] text-5xl border px-4 py-2 cursor-pointer select-none"
+            className="
+              group
+              relative
+              rounded-2xl
+              border border-border
+              bg-background
+              px-5
+              py-3
+              font-[QuranCommon]
+              text-4xl
+              leading-none
+              cursor-pointer
+              select-none
+              shadow-sm
+
+              transition-all
+              duration-200
+
+              hover:-translate-y-1
+              hover:border-red-400/60
+              hover:bg-red-500/5
+              hover:shadow-md
+
+              active:scale-95
+            "
           >
             {word.word}
-          </div>
-        ))}
-      </div>
 
-      {result && (
-        <div
-          ref={resultRef}
-          className="flex flex-col items-center gap-4"
-        >
-          <h2 className="text-3xl font-bold">
-            {result === "success" ? "أحسنت، نجحت" : "لم تنجح"}
-          </h2>
-          <p className="text-muted-foreground">
-            {result === "success"
-              ? "رتبت الآيات بالشكل الصحيح."
-              : "الترتيب غير صحيح."}
+            <span className="
+              pointer-events-none
+              absolute
+              -top-2
+              -left-2
+              flex
+              h-5
+              w-5
+              items-center
+              justify-center
+              rounded-full
+              bg-red-500
+              text-[10px]
+              font-sans
+              text-white
+              opacity-0
+              scale-75
+              transition-all
+              duration-200
+              group-hover:opacity-100
+              group-hover:scale-100
+            ">
+              ×
+            </span>
+          </div>
+        ))
+      ) : (
+        <div className="text-center text-muted-foreground">
+          <p className="text-sm">
+            اختر الكلمات بالترتيب الصحيح
           </p>
         </div>
       )}
+    </div>
+  </div>
 
-      {!result && (
-        <Button
-          className="w-1/2 mx-auto"
-          disabled={userInput.length === 0}
-          onClick={Check}
-        >
-          تحقق
-        </Button>
-      )}
 
-       <button onClick={() => {
-          Check();
-          }}>
-          d
-        </button>
+  {result && (
+    <div
+      ref={resultRef}
+      className={`
+        relative
+        overflow-hidden
+        rounded-3xl
+        border
+        p-8
+        text-center
+        shadow-sm
+        ${
+          result === "success"
+            ? "border-green-500/30 bg-green-500/5"
+            : "border-red-500/30 bg-red-500/5"
+        }
+      `}
+    >
+      <div
+        className={`
+          mx-auto
+          mb-4
+          flex
+          h-14
+          w-14
+          items-center
+          justify-center
+          rounded-full
+          text-2xl
+          ${
+            result === "success"
+              ? "bg-green-500/10 text-green-600"
+              : "bg-red-500/10 text-red-600"
+          }
+        `}
+      >
+        {result === "success" ? "✓" : "×"}
+      </div>
 
-      {!result && (
-        <div className="flex flex-col items-center gap-4 w-full max-w-2xl mx-auto">
-          <div className="w-full relative">
-            <input
-              type="text"
-              value={wordInput}
-              onChange={(e) => setWordInput(e.target.value)}
-              placeholder="اكتب حروفًا للبحث عن كلمة..."
-              className="
-                w-full
-                text-center
-                text-2xl
-                py-4
-                px-6
-                rounded-2xl
-                border-2
-                border-neutral-300
-                dark:border-neutral-700
-                bg-transparent
-                focus:outline-none
-                focus:ring-2
-                focus:ring-green-500
-                focus:border-transparent
-                transition-all
-                duration-300
-                placeholder:text-neutral-400
-                dark:placeholder:text-neutral-500
-                font-[QuranCommon]
-              "
-              dir="rtl"
-              autoFocus
-            />
-          </div>
-          {wordInput.trim() && (
-            <div className="flex flex-wrap gap-3 justify-center mt-2 max-h-48 overflow-y-auto p-2">
-              {filteredWords.length > 0 ? (
-                filteredWords.map((word) => (
-                  <div
-                    key={`${word.id}-${word.wordIndex}`}
-                    className="
-                      rounded-xl
-                      font-[QuranCommon]
-                      text-3xl
-                      border
-                      px-5
-                      py-2
-                      cursor-pointer
-                      select-none
-                      hover:bg-green-500/20
-                      dark:hover:bg-green-500/20
-                      transition-all
-                      duration-200
-                      hover:scale-105
-                      active:scale-95
-                    "
-                    onClick={() => {
-                      addUserInput(word);
-                      setWordInput(""); 
-                    }}
-                  >
-                    {word.word}
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-neutral-500 animate-pulse">
-                  لا توجد كلمات مطابقة
-                </p>
-              )}
+      <h2 className="text-3xl font-bold tracking-tight">
+        {result === "success"
+          ? "أحسنت، نجحت"
+          : "لم تنجح"}
+      </h2>
+
+      <p className="mt-2 text-muted-foreground">
+        {result === "success"
+          ? "رتبت الآيات بالشكل الصحيح."
+          : "الترتيب غير صحيح."}
+      </p>
+
+     
+    </div>
+  )}
+
+
+  {!result && (
+    <Button
+      disabled={userInput.length === 0}
+      onClick={Check}
+      className="
+        mx-auto
+        h-14
+        w-full
+        max-w-md
+        rounded-2xl
+        text-lg
+        font-semibold
+        shadow-sm
+        transition-all
+        duration-200
+        hover:-translate-y-0.5
+        hover:shadow-md
+        disabled:hover:translate-y-0
+      "
+    >
+      تحقق من الترتيب
+    </Button>
+  )}
+
+
+  {!result && (
+    <div className="
+      w-full
+      max-w-3xl
+      mx-auto
+      rounded-3xl
+      border border-border/60
+      bg-card/50
+      p-5
+      shadow-sm
+      backdrop-blur-sm
+    ">
+      <div className="mb-3 px-1 text-right">
+        <p className="text-sm font-medium">
+          أضف كلمة
+        </p>
+
+        <p className="mt-1 text-xs text-muted-foreground">
+          ابحث عن الكلمة ثم اضغط عليها لإضافتها
+        </p>
+      </div>
+
+      <div className="relative">
+        <input
+          type="text"
+          value={wordInput}
+          onChange={(e) => setWordInput(e.target.value)}
+          placeholder="ابحث عن كلمة..."
+          dir="rtl"
+          autoFocus
+          className="
+            h-16
+            w-full
+            rounded-2xl
+            border
+            border-border
+            bg-background
+            px-6
+            text-center
+            font-[QuranCommon]
+            text-3xl
+            shadow-sm
+            outline-none
+
+            transition-all
+            duration-200
+
+            placeholder:text-muted-foreground/50
+
+            focus:border-green-500/50
+            focus:ring-4
+            focus:ring-green-500/10
+          "
+        />
+      </div>
+
+
+      {wordInput.trim() && (
+        <div className="
+          mt-4
+          max-h-56
+          overflow-y-auto
+          rounded-2xl
+          bg-muted/30
+          p-3
+        ">
+          {filteredWords.length > 0 ? (
+            <div className="
+              flex
+              flex-wrap
+              justify-center
+              gap-2
+            ">
+              {filteredWords.map((word) => (
+                <div
+                  key={`${word.id}-${word.wordIndex}`}
+                  onClick={() => {
+                    addUserInput(word);
+                    setWordInput("");
+                  }}
+                  className="
+                    rounded-xl
+                    border border-border/70
+                    bg-background
+                    px-5
+                    py-2.5
+                    font-[QuranCommon]
+                    text-3xl
+                    leading-none
+                    cursor-pointer
+                    select-none
+                    shadow-sm
+
+                    transition-all
+                    duration-150
+
+                    hover:-translate-y-0.5
+                    hover:border-green-500/50
+                    hover:bg-green-500/5
+                    hover:shadow-md
+
+                    active:scale-95
+                  "
+                >
+                  {word.word}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="
+              flex
+              h-20
+              items-center
+              justify-center
+              text-sm
+              text-muted-foreground
+            ">
+              لا توجد كلمات مطابقة
             </div>
           )}
         </div>
       )}
     </div>
+  )}
+
+</div>
   );
 }

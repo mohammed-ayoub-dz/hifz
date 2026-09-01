@@ -173,7 +173,7 @@ const totalMemorizedAyahs = useMemo(() => {
              تريد حفظ آيات جديدة ؟
             </p>
 
-        <Link href={"/app/session/new"}>
+        <Link href={"/app/session/new"} className="w-full">
             <button
               type="button"
               className="mt-8 rounded-xl bg-black px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-black"
@@ -262,63 +262,8 @@ const totalMemorizedAyahs = useMemo(() => {
         </section>
       </div>
 
-      <div className="mx-auto mt-4 max-w-6xl">
-        <section>
-          <div className="mb-4">
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              الوصول السريع
-            </p>
+    
 
-            <h2 className="mt-1 text-xl font-semibold">
-              استمر في رحلتك
-            </h2>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <QuickAction
-              title="المصحف الشريف"
-              description="تصفح السور والآيات وابدأ الحفظ."
-            />
-
-            <QuickAction
-              title="خطة الحفظ"
-              description={`هدفك الحالي ${user.daily_goal} آية يوميًا.`}
-            />
-          </div>
-        </section>
-      </div>
-
-      <div className="mx-auto mt-4 max-w-6xl">
-        <section className="rounded-3xl border border-neutral-200 p-6 dark:border-neutral-800 sm:p-8">
-          <div className="mb-6">
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              رحلتك في القرآن
-            </p>
-
-            <h2 className="mt-1 text-xl font-semibold">
-              السور التي بدأت حفظها
-            </h2>
-          </div>
-
-          <div className="space-y-3">
-            {progress.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                لم تبدأ حفظ أي سورة بعد.
-              </p>
-            ) : (
-              progress.map((item) => (
-                <Surah
-                  key={item.id}
-                  number={item.surah_number}
-                  name={`السورة رقم ${item.surah_number}`}
-                  status="progress"
-                  progress={calculateProgress(item)}
-                />
-              ))
-            )}
-          </div>
-        </section>
-      </div>
     </main>
   );
 }
@@ -353,85 +298,6 @@ function StatCard({
   );
 }
 
-function QuickAction({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <button
-      type="button"
-      className="group rounded-2xl border border-neutral-200 p-6 text-right transition-all hover:border-neutral-400 hover:shadow-sm dark:border-neutral-800 dark:hover:border-neutral-600"
-    >
-      <h3 className="text-lg font-semibold transition-transform group-hover:-translate-x-1">
-        {title}
-      </h3>
-
-      <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
-        {description}
-      </p>
-    </button>
-  );
-}
-
-function Surah({
-  number,
-  name,
-  status,
-  progress,
-}: {
-  number: number;
-  name: string;
-  status: "completed" | "progress" | "locked";
-  progress?: number;
-}) {
-  return (
-    <div className="flex items-center gap-4 rounded-2xl border border-neutral-100 p-4 dark:border-neutral-900">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-sm font-semibold dark:bg-neutral-900">
-        {number}
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between gap-4">
-          <h3 className="font-medium">
-            {name}
-          </h3>
-
-          {status === "completed" && (
-            <span className="text-xs font-medium text-neutral-500">
-              مكتملة
-            </span>
-          )}
-
-          {status === "progress" && (
-            <span className="text-xs font-medium">
-              {progress}%
-            </span>
-          )}
-
-          {status === "locked" && (
-            <span className="text-xs text-neutral-400">
-              لم تبدأ
-            </span>
-          )}
-        </div>
-
-        {status === "progress" && (
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
-            <div
-              className="h-full rounded-full bg-black dark:bg-white"
-              style={{
-                width: `${progress}%`,
-              }}
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function Session({
   session,

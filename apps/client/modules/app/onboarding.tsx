@@ -42,7 +42,11 @@ interface User {
   created_at: string;
 }
 
-export default function Onboarding() {
+type OnboardingProps ={
+  isSettings : boolean;
+}
+
+export default function Onboarding({isSettings} : OnboardingProps) {
   const router = useRouter();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,9 +70,9 @@ const { user, loading } = useUser();
         return;
     }
 
-    if (user.onboarded) {
-        router.replace("/app");
-        return;
+    if (user.onboarded && isSettings == false) {
+      router.replace("/app");
+      return;
     }
 
     setCheckingUser(false);
@@ -204,10 +208,9 @@ const { user, loading } = useUser();
   }
 
 
-  if (!user || user.onboarded) {
+  if (!user || (user.onboarded && isSettings === false)) {
     return null;
   }
-
   return (
     <main
       ref={containerRef}
