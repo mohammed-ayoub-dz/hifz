@@ -82,5 +82,5 @@ func getApp() *fiber.App {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-    adaptor.FiberApp(getApp())(w, r)
+	adaptor.FiberApp(getApp())(w, r)
 }
