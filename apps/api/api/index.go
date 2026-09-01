@@ -46,27 +46,24 @@ func getApp() *fiber.App {
 				"https://hifzapp.netlify.app",
 			},
 			AllowMethods: []string{
-				"GET",
-				"POST",
-				"PUT",
-				"PATCH",
-				"DELETE",
-				"OPTIONS",
+				"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
 			},
 			AllowHeaders: []string{
 				"Origin",
 				"Content-Type",
 				"Accept",
 				"Authorization",
+				"X-Requested-With",
 			},
 			AllowCredentials: true,
 		}))
-		api := app.Group("/api") //api
+
+		api := app.Group("/api/v1")
 
 		authRoutes.RegisterRoutes(api)
 
 		protectedAPI := api.Group(
-			"/app/v1",
+			"/app",
 			middleware.Protected(),
 		)
 
@@ -82,5 +79,6 @@ func getApp() *fiber.App {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	adaptor.FiberApp(getApp())(w, r)
+    r.RequestURI = r.URL.String()
+    adaptor.FiberApp(getApp())(w, r)
 }
