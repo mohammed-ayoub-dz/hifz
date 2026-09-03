@@ -43,7 +43,6 @@ export default function ListeningStage({
           text={currentAyah.text}
           segments={recitationAyah.segments}
           audioUrl={audioUrl}
-          repetitions={repetitions}
           onComplete={onComplete}
         />
       </div>
